@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "build": "unzip project.zip -d app",
-    "start": "node app/index.js"
-  }
-}
