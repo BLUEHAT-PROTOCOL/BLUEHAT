@@ -4,6 +4,8 @@
 
 FROM node:20-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -18,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install yt-dlp
-RUN pip3 install -U yt-dlp
+RUN pip3 install -U yt-dlp --break-system-packages
 
 # Create app directory
 WORKDIR /app
@@ -27,7 +29,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy app source
 COPY . .
@@ -46,7 +48,7 @@ EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/api/health || exit 1
+ CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Start command
 CMD ["npm", "start"]
